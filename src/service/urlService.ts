@@ -14,12 +14,19 @@ const reduceUrl = async (originalUrl: string) => {
 const getLink = async (shortUrl: string) => {
   const urlFinded = await urlModel.getLink(shortUrl);
 
-  const now = new Date().toLocaleDateString();
-  const expiresIn = urlFinded?.expiresIn;
+  if (urlFinded) {
+    const now = new Date().toLocaleDateString();
+    const expiresIn = urlFinded.expiresIn;
+  
+    const nowYear = Number(now.split("/")[2]);
+    const expiresYear =  Number(expiresIn.split("/")[2]);
+    
+    if (now === expiresIn || nowYear > expiresYear) throw new Error("This short url was expired");
+  
+    return urlFinded?.originalUrl;
+  }
 
-  if (now === expiresIn) throw new Error("This short url was expired");
-
-  return urlFinded?.originalUrl;
+  throw new Error("This short url does not cadastred");
   
 }
 
