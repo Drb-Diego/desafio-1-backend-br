@@ -15,6 +15,17 @@ const reduceUrl = async (req: Request, res: Response, next: NextFunction) => {
   }
 }
 
+const redirect = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { shortUrl }  = req.params;
+    const url = await urlService.getLink(shortUrl);
+    return res.status(200).redirect(`https://${url}`);
+  } catch (error) {
+    next(error);
+  }
+}
+
 export default {
   reduceUrl,
+  redirect
 }
